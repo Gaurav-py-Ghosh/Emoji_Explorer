@@ -1,145 +1,65 @@
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final cameras = await availableCameras();
-  final firstCamera = cameras.first;
-
-  runApp(EmojiExplorerApp(camera: firstCamera));
+void main() {
+  runApp(MyApp());
 }
 
-class EmojiExplorerApp extends StatelessWidget {
-  final CameraDescription camera;
-
-  const EmojiExplorerApp({Key? key, required this.camera}) : super(key: key);
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Emoji Explorer',
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: Colors.black,
-        appBarTheme: AppBarTheme(color: Colors.blueGrey.shade900),
+      title: 'Flutter App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: EmojiExplorerHome(camera: camera),
+      home: MyHomePage(),
     );
   }
 }
 
-class EmojiExplorerHome extends StatelessWidget {
-  final CameraDescription camera;
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
 
-  const EmojiExplorerHome({Key? key, required this.camera}) : super(key: key);
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Emoji Explorer'),
-        centerTitle: true,
+        title: Text("Flutter with Gradle 8.3"),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             Text(
-              'Welcome to Emoji Explorer',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              'You have pushed the button this many times:',
             ),
-            SizedBox(height: 20),
-            Icon(Icons.explore, size: 100, color: Colors.blue),
-            SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CameraScreen(camera: camera),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 40),
-              ),
-              child: Text(
-                'Start Exploring',
-                style: TextStyle(fontSize: 18),
-              ),
+            Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class CameraScreen extends StatefulWidget {
-  final CameraDescription camera;
-
-  const CameraScreen({Key? key, required this.camera}) : super(key: key);
-
-  @override
-  _CameraScreenState createState() => _CameraScreenState();
-}
-
-class _CameraScreenState extends State<CameraScreen> {
-  late CameraController _controller;
-  late Future<void> _initializeControllerFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = CameraController(
-      widget.camera,
-      ResolutionPreset.high,
-    );
-    _initializeControllerFuture = _controller.initialize();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Stack(
-              children: [
-                CameraPreview(_controller),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
-                        shape: CircleBorder(),
-                        padding: EdgeInsets.all(15),
-                      ),
-                      child: Icon(Icons.close, size: 30, color: Colors.white),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: Icon(Icons.add),
       ),
     );
   }
